@@ -1,112 +1,268 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500&display=swap');
-
 body {
-
-    background-color: rgb(169, 244, 219);
+  background:linear-gradient(to right, #000000, #161521);
+  margin: 0;
+  font-family: sans-serif;
+  color: white;
+  overflow-x: hidden;
+  user-select: none;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-
+button {
+  background: transparent;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
 }
 
-
-nav {
-    font-family: 'Rajdhani', sans-serif;
+.logo {
+  height: 100px;
+}
+.topBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  font-size: 50px;
+  color: #5c55b4;
+  text-align: center;
+  margin: 0 20px;
+}
+.logo img {
+  width: 100px;
+  border-radius: 40px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-nav ul {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    height: 60px;
-    background-color: black;
-    color: white;
+.categoryContainer {
+  margin: 10px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.categoryContainer .category {
+  padding: 10px 15px;
+  margin: 2px 5px;
+  border: 2px solid rgba(255, 255, 255, 0.36);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s all;
+}
+.categoryContainer .category:hover {
+  background-color: #5c55b4;
+  color: white;
+  padding: 10px 30px;
+}
+.categoryContainer .category.active {
+  background-color: #5c55b4;
+  color: white;
 }
 
-nav ul li {
-    padding: 0 12px;
+::-webkit-scrollbar {
+  display: none;
 }
 
-.brand img {
-    width: 100px;
-    padding: 0 8px;
-    border-radius: 50px;
+.songItemContainer {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 400px;
+  overflow: auto;
+  margin: 10px 0;
+  padding: 10px 0;
+  border: 2px solid white;
+  border-radius: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.songItemContainer .songItem {
+  width: 400px;
+  height: 40px;
+  margin: 2px 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 5px;
+  border: 2px solid white;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: 0.3s all;
+}
+.songItemContainer .songItem:hover {
+  background-color: #5c55b4;
+  color: white;
+  padding: 12px 30px;
+  font-size: 18px;
+  img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+  }
+}
+.songItemContainer .songItem img {
+  width: 40px;
+  height: 40px;
+  transition: 0.3s all;
+  border-radius: 20px;
+}
 
+.audioContainer {
+  position: absolute;
+  padding: 20px 10px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 120px;
+  backdrop-filter: blur(10px);
 }
-.brand{
-    display: flex;
-    align-items: center;
-    font-weight: bolder;
-    font-size: 1.3rem;
-}
-.container{
-    min-height: 60vh;
-    background-color: black;
-    color: white;
-    font-family: 'Rajdhani', sans-serif;
-    display: flex;
-    margin: 23px auto;
-    width: 80%;
-    border-radius: 12px;
-    padding: 34px;
-    background-image: url(bg.webp);
-}
-.bottom{
-    position: sticky;
-    bottom: 0;
-    height: 130px;
-    background-color: black;
-    color: white;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
 
+#audioPlayer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+#controls {
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
 }
-.icons{
-    margin-top: 14px;
+
+#progressContainer {
+  width: 80%;
+  margin: 10px 0;
 }
-.icons i{
-    cursor: pointer;
+
+#timeContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
 }
-#myProgressBar{
-    width: 80vw;
-    cursor: pointer;
+
+#songName {
+    color:#5c55b4
 }
-.songItem{
-    height: 50px;
-    display: flex;
-    background-color: rgb(84, 117, 108);
-    color: black;
-    margin: 12px;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 30px;
+
+#progressBar {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 2px;
+  background-color: white;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
 }
-.songItem img{
-    width: 43px;
-    margin: 23px;
-    border-radius: 34px;
+
+#progressBar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background-color: #5c55b4;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: 2s ease-in-out;
 }
-.timestamp{
-    margin: 0 23px;
+
+#progressBar::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background-color: #5c55b4;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
 }
-.timestamp i{
-    cursor: pointer;
+
+#progressBar::-webkit-slider-thumb:hover {
+  box-shadow: 0px 0px 0px 7px #5b55b45a;
+  transition: 0.3s ease-in-out;
 }
-.songitemcontainer{
-    margin-top: 30px;
+
+/* Media Query */
+
+@media only screen and (max-width: 600px) {
+  h1 {
+    font-size: 30px;
+  }
+  .logo img {
+    width: 80px;
+  }
+  .songItemContainer {
+    width: 100%;
+  }
+  .audioContainer {
+    width: 100%;
+  }
+  .songItemContainer .songItem {
+    width: 90%;
+    word-wrap: break-word;
+  }
 }
-.songInfo{
-    position: absolute;
-    left: 10vw;
-    font-family: 'Rajdhani', sans-serif;
+
+/* Icons */
+.ph--pause-thin {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='%23000' d='M200 36h-40a12 12 0 0 0-12 12v160a12 12 0 0 0 12 12h40a12 12 0 0 0 12-12V48a12 12 0 0 0-12-12m4 172a4 4 0 0 1-4 4h-40a4 4 0 0 1-4-4V48a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4ZM96 36H56a12 12 0 0 0-12 12v160a12 12 0 0 0 12 12h40a12 12 0 0 0 12-12V48a12 12 0 0 0-12-12m4 172a4 4 0 0 1-4 4H56a4 4 0 0 1-4-4V48a4 4 0 0 1 4-4h40a4 4 0 0 1 4 4Z'/%3E%3C/svg%3E");
+  background-color: currentColor;
+  -webkit-mask-image: var(--svg);
+  mask-image: var(--svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
-.songInfo img{
-    opacity: 0;
-    transition: opacity 0.4s ease-in;
+
+.hugeicons--next {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M15.935 12.626c-.254 1.211-1.608 2.082-4.315 3.822c-2.945 1.893-4.417 2.84-5.61 2.475a2.8 2.8 0 0 1-1.088-.635C4 17.418 4 15.612 4 12s0-5.418.922-6.288a2.8 2.8 0 0 1 1.089-.635c1.192-.365 2.664.582 5.609 2.475c2.707 1.74 4.06 2.61 4.315 3.822c.087.412.087.84 0 1.252M20 5v14' color='%23000'/%3E%3C/svg%3E");
+  background-color: currentColor;
+  -webkit-mask-image: var(--svg);
+  mask-image: var(--svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.hugeicons--previous {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M8.065 12.626c.254 1.211 1.608 2.082 4.315 3.822c2.945 1.893 4.417 2.84 5.61 2.475c.403-.124.775-.34 1.088-.635C20 17.418 20 15.612 20 12s0-5.418-.922-6.288a2.8 2.8 0 0 0-1.088-.635c-1.193-.365-2.665.582-5.61 2.475c-2.707 1.74-4.06 2.61-4.315 3.822c-.087.412-.087.84 0 1.252M4 4v16' color='%23000'/%3E%3C/svg%3E");
+  background-color: currentColor;
+  -webkit-mask-image: var(--svg);
+  mask-image: var(--svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.solar--play-outline {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M7.238 3.044C5.652 2.182 3.75 3.32 3.75 5.033v13.934c0 1.714 1.902 2.851 3.488 1.989l12.812-6.967c1.6-.87 1.6-3.108 0-3.977zM2.25 5.033c0-2.905 3.167-4.687 5.705-3.306l12.812 6.967c2.644 1.438 2.644 5.174 0 6.612L7.955 22.273c-2.538 1.38-5.705-.4-5.705-3.306z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-color: currentColor;
+  -webkit-mask-image: var(--svg);
+  mask-image: var(--svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }

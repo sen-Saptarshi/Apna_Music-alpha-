@@ -1,106 +1,131 @@
-console.log("Welcome to Apna Music")
-//initialize the Variables
+console.log("\x1b[35mWelcome to Apna Music\x1b[0m");
 let songIndex = 0;
-let audioElement = new Audio('songs/1.mp3');
-let masterPlay = document.getElementById('masterPlay');
-let myProgressBar = document.getElementById('myProgressBar');
-let gif = document.getElementById('gif');
-let masterSongName = document.getElementById('masterSongName');
-let songItems = Array.from(document.getElementsByClassName('songItem'));
+let audioElement = new Audio(songs[songIndex].filepath);
+let playPauseButton = document.getElementById("playPause");
+let prevButton = document.getElementById("prev");
+let nextButton = document.getElementById("next");
+let progressBar = document.getElementById("progressBar");
+let currentTimeElem = document.getElementById("currentTime");
+let durationElem = document.getElementById("duration");
+let songNameElem = document.getElementById("songName");
+//initialize the Variables
+let songItemContainer = document.querySelector(".songItemContainer");
+let categoryContainer = document.querySelector(".categoryContainer");
 
-let songs = [
-    {songName: "Tu Hi Na Jaane", filepath:"songs/1.mp3", coverPath: "covers/1.jpg"},
-    {songName: "Tu_Hi_Yaar_Mera_Pati_Patni_Aur_Woh", filepath:"songs/2.mp3", coverPath: "covers/2.jpg"},
-    {songName: "Tujhe_kaise_Pata_Na_Chala", filepath:"songs/3.mp3", coverPath: "covers/3.jpg"},
-    {songName: "Tujhe-Kitna-Chahein-Aur", filepath:"songs/4.mp3", coverPath: "covers/4.jpg"},
-    {songName: "Tula_Japnar_Aahe", filepath:"songs/5.mp3", coverPath: "covers/5.jpg"},
-    {songName: "Tum_Ho_Na", filepath:"songs/6.mp3", coverPath: "covers/6.jpg"},
-    {songName: "Kya Hi Kaho", filepath:"songs/7.mp3", coverPath: "covers/7.jpg"},
-    {songName: "Vaaste-Song-(Dhvani-Bhanushali)", filepath:"songs/8.mp3", coverPath: "covers/8.jpg"},
-    {songName: "Woh_Din_(Arijit_Singh_Version)", filepath:"songs/9.mp3", coverPath: "covers/9.jpg"},
-    {songName: "Yaad_Hai_(Aiyaary)", filepath:"songs/10.mp3", coverPath: "covers/10.jpg"},
+let tags = new Set();
 
-]
-songItems.forEach((element, i) => {
-    element.getElementsByTagName("img")[0].src = songs[i].coverPath;
-    element.getElementsByClassName("songName")[0].innerText = songs[i].songName;
+// Collect unique tags from songs
+songs.forEach((song) => song.tags.forEach((tag) => tags.add(tag)));
+
+// Create and append category elements
+tags.forEach((tag) => {
+  const tagElement = document.createElement("div");
+  tagElement.classList.add("category");
+  tagElement.innerText = tag;
+  tagElement.onclick = () => toggleCategory(tagElement);
+  categoryContainer.appendChild(tagElement);
 });
 
-//Handle play/pause
-masterPlay.addEventListener('click', ()=>{
-    if(audioElement.paused || audioElement.currentTime<=0){
-        audioElement.play();
-        masterPlay.classList.remove('fa-circle-play');
-        masterPlay.classList.add('fa-circle-pause');
-        gif.style.opacity = 1;
-    }
-    else{
-        audioElement.pause();
-        masterPlay.classList.remove('fa-circle-pause');
-        masterPlay.classList.add('fa-circle-play');
-        gif.style.opacity = 0;
-    }
-})
-//Listen to Events
-audioElement.addEventListener('timeupdate', ()=>{
-    //update Seekbar
-    progress = parseInt((audioElement.currentTime/audioElement.duration)*100)
-    myProgressBar.value =progress;
+let filteredSongs = songs;
 
-})
-myProgressBar.addEventListener('change', ()=>{
-    audioElement.currentTime = myProgressBar.value * audioElement.duration / 100
-})
+// Display songs based on selected categories
+function displaySongs() {
+  songItemContainer.innerHTML = "";
+  filteredSongs = filterSongs();
 
-const makeAllPlays = ()=>{
-    Array.from(document.getElementsByClassName('songItemPlay')).forEach((element)=>{
-        element.classList.remove('fa-pause');
-        element.classList.add('fa-play');
-    })
+  filteredSongs.forEach((song, i) => {
+    const songElement = document.createElement("div");
+    songElement.classList.add("songItem");
+    songElement.onclick = () => playSong(song, i);
+    songElement.innerHTML = `
+      <img alt=${i} src=${song.coverPath} />
+      <span class="songItemName">${song.songName}</span>
+      <span ></span>`;
+    songItemContainer.appendChild(songElement);
+  });
 }
-Array.from(document.getElementsByClassName('songItemPlay')).forEach((element)=>{
-    element.addEventListener('click', (e)=>{
-        makeAllPlays();
-        songIndex = parseInt(e.target.id);
-        e.target.classList.remove('fa-play');
-        e.target.classList.add('fa-pause');
-        audioElement.src = `songs/${songIndex+1}.mp3`;
-        masterSongName.innerText = songs[songIndex].songName;
-        audioElement.currentTime = 0;
-        audioElement.play();
-        gif.style.opacity = 1;
-        masterPlay.classList.remove('fa-circle-play');
-        masterPlay.classList.add('fa-circle-pause');
-    })
-})
 
-document.getElementById('next').addEventListener('click', ()=>{
-    if(songIndex>=9){
-        songIndex=0
-    }
-    else{
-        songIndex += 1;
-    }
-    audioElement.src = `songs/${songIndex+1}.mp3`;
-    masterSongName.innerText = songs[songIndex].songName;
-    audioElement.currentTime = 0;
+// Toggle category selection
+function toggleCategory(element) {
+  element.classList.toggle("active");
+  displaySongs();
+}
+
+// Filter songs based on selected categories
+function filterSongs() {
+  const selectedCategories = Array.from(
+    document.querySelectorAll(".category.active")
+  ).map((el) => el.innerText);
+  return songs.filter((song) =>
+    selectedCategories.every((tag) => song.tags.includes(tag))
+  );
+}
+
+// Initial display of all songs
+displaySongs();
+
+// Play song when user clicks on one of the songs
+function playSong(element, index) {
+  audioElement.src = element.filepath;
+  songNameElem.innerText = element.songName;
+  songIndex = index;
+  audioElement.play();
+}
+
+// Audio Controls
+
+audioElement.addEventListener("loadedmetadata", () => {
+  durationElem.innerText = formatTime(audioElement.duration);
+  progressBar.max = audioElement.duration;
+  songNameElem.innerText = filteredSongs[songIndex].songName;
+});
+
+audioElement.addEventListener("timeupdate", () => {
+  progressBar.value = audioElement.currentTime;
+  currentTimeElem.innerText = formatTime(audioElement.currentTime);
+});
+
+audioElement.addEventListener("ended", () => {
+  changeSong(1);
+});
+
+progressBar.addEventListener("input", () => {
+  audioElement.currentTime = progressBar.value;
+});
+
+playPauseButton.addEventListener("click", () => {
+  if (audioElement.paused || audioElement.ended) {
     audioElement.play();
-    gif.style.opacity = 1;
-    masterPlay.classList.remove('fa-circle-play');
-    masterPlay.classList.add('fa-circle-pause');
-})
-document.getElementById('previous').addEventListener('click', ()=>{
-    if(songIndex<=0){
-        songIndex=0
-    }
-    else{
-        songIndex -= 1;
-    }
-    audioElement.src = `songs/${songIndex+1}.mp3`;
-    masterSongName.innerText = songs[songIndex].songName;
-    audioElement.currentTime = 0;
-    audioElement.play();
-    gif.style.opacity = 1;
-    masterPlay.classList.remove('fa-circle-play');
-    masterPlay.classList.add('fa-circle-pause');
-})
+    playPauseButton.innerHTML = `<span class="ph--pause-thin">`;
+  } else {
+    audioElement.pause();
+    playPauseButton.innerHTML = `<span class="solar--play-outline"></span>`;
+  }
+});
+
+prevButton.addEventListener("click", () => {
+  changeSong(-1);
+});
+
+nextButton.addEventListener("click", () => {
+  changeSong(1);
+});
+
+function changeSong(direction) {
+  songIndex =
+    (songIndex + direction + filteredSongs.length) % filteredSongs.length;
+  audioElement.src = filteredSongs[songIndex].filepath;
+  audioElement.play();
+  playPauseButton.innerHTML = `<span class="ph--pause-thin">`;
+  songNameElem.innerText = filteredSongs[songIndex].songName;
+  audioElement.addEventListener("loadedmetadata", () => {
+    durationElem.innerText = formatTime(audioElement.duration);
+    progressBar.max = audioElement.duration;
+  });
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secondsPart = Math.floor(seconds % 60);
+  return `${minutes}:${secondsPart < 10 ? "0" : ""}${secondsPart}`;
+}
